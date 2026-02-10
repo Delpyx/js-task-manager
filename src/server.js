@@ -1,4 +1,5 @@
 const { listarTarea, crearTarea, borrarTarea, actualizarStatusTarea, buscarTarea } = require('./taskManager');
+const {validateTask, requireBody} = require("./helpers/middleware.js");
 express = require('express');
 
 const app = express();
@@ -8,7 +9,7 @@ app.use(express.json());
 
 let tasks = [];
 
-app.get('/tasks', (req, res) => {
+app.get('/tasks',(req, res) => {
     listarTarea(res);
 });
 
@@ -16,7 +17,7 @@ app.get('/tasks/:id', (req, res) => {
     buscarTarea(req,res);
 });
 
-app.post('/tasks', (req, res) => {
+app.post('/tasks',requireBody,validateTask, (req, res) => {
     crearTarea(req,res);
 });
 
