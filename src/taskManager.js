@@ -15,25 +15,27 @@ function listarTarea(res){
 
 function crearTarea(req,res){
     const {title, status} = req.body;
-    const task = new taskClass(Date.now(),title,status);
+
+    const task = new taskClass(tasks.length > 0 ? tasks.length + 1 : 1,title,status);
     tasks.push(task);
     res.json(task);
 }
 
 function borrarTarea(req,res){
-    const {title} = req.body;
-    let index = tasks.findIndex(task => task.title === title);
+    const {id} = req.params;
+    const index = tasks.findIndex(task => task.id === parseInt(id));
     if (index !== -1){
-        tasks.splice(index, 1);
-        res.json({message: "Tarea eliminada"});
+        const deletedTask = tasks.splice(index,1);
+        res.json(deletedTask[0]);
     } else{
         res.status(404).json({message: "Tarea no encontrada"});
     }
 }
 
 function actualizarStatusTarea(req,res){
-    const {title, status} = req.body;
-    let task = tasks.find(task => task.title === title);
+    const{id} = req.params;
+    const {status} = req.body;
+    let task = tasks.find(task => task.id === parseInt(id));
     if (task){
         task.status = status;
         res.json(task);
