@@ -1,6 +1,8 @@
-const {mostrarMenu} = require("./menu.js");
+const app = require("./server.js");
 const {guardarDatos,cargarDatos} = require("./storage.js");
 const {cargarTareas,guardarTareas} = require("./taskManager.js");
+const express = require("express");
+
 let tasks = [];
 
 async function iniciarApp(){
@@ -12,14 +14,19 @@ async function salirApp(){
     console.log("Datos guardados. Saliendo...");
     process.exit();
 }
+
 async function main() {
     await iniciarApp();
-    await mostrarMenu();
-    await salirApp();
+    console.log("los datos se han cargado correctamente");
+    app.listen(3000, () => {
+        console.log("Servidor escuchando en el puerto 3000");
+    });
+    process.on("SIGINT", salirApp);
 }
 
-
-console.log("Iniciando la aplicación...");
 main();
+
+
+
 
 

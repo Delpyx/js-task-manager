@@ -4,31 +4,59 @@ const { guardarDatos,cargarDatos } = require("./storage.js");
 function cargarTareas(tareasGuardadas){
     tasks = tareasGuardadas;
 }
+
 function guardarTareas(){
     return tasks;
 }
-function listarTarea(){
-    console.log(tasks);
+
+function listarTarea(res){
+    res.json(tasks);
 }
 
-function crearTarea(name){
-    const task = new taskClass(Date.now(),name,"pendiente");
+function crearTarea(req,res){
+    const {title, status} = req.body;
+    const task = new taskClass(Date.now(),title,status);
     tasks.push(task);
+    res.json(task);
 }
-function borrarTarea(name){
-    let index = tasks.findIndex(task => task.title === name);
+
+function borrarTarea(req,res){
+    const {title} = req.body;
+    let index = tasks.findIndex(task => task.title === title);
     if (index !== -1){
         tasks.splice(index, 1);
-        console.log("Tarea eliminada");
+        res.json({message: "Tarea eliminada"});
     } else{
-        console.log("Tarea no encontrada");
+        res.status(404).json({message: "Tarea no encontrada"});
     }
 }
-let tasks = cargarDatos();
+
+function actualizarStatusTarea(req,res){
+    const {title, status} = req.body;
+    let task = tasks.find(task => task.title === title);
+    if (task){
+        task.status = status;
+        res.json(task);
+    } else{
+        res.status(404).json({message: "Tarea no encontrada"});
+    }
+}
+function buscarTarea(req,res){
+    const {id} = req.params;
+    let task = tasks.find(task => task.id === parseInt(id));
+    if (task){
+        res.json(task);
+    } else{
+        res.status(404).json({message: "Tarea no encontrada"});
+    }
+}
+
 module.exports = {
     crearTarea,
     borrarTarea,
     listarTarea,
     cargarTareas,
     guardarTareas,
+    actualizarStatusTarea,
+    buscarTarea,
 }
